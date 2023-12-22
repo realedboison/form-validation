@@ -79,48 +79,66 @@
     }
 
     .output-container {
-    font-weight: bold;
-    margin-inline: auto;
-    padding: 40px;
-    width: 300px;
+        margin-inline: auto;
+        padding: 40px;
+        width: 300px;
+    } 
+    .output-item {
+    margin-block: 10px;
+    } 
 }
 </style>
 <body>
   
-
-
-
-
-
 <?php 
  
+// variable chain
 $nameError = $emailError = $genderError = "";
 $name = $email = $gender = $message = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
+        $name = $email = $gender = $message = "";
+
+        header("Location: ".$_SERVER['PHP_SELF']);
+        exit();
+
+    // NAME
     if (empty($_POST["name"]))
         {$nameError = "Name is Required";}
     else 
         {$name = text_input($_POST["name"]);
+        // regex pattern match 
         if (!preg_match("/^[a-zA-Z ]*$/", $name))
             {$nameError = "Only letters and whitespace allowed";}
     }
 
+    // EMAIL
     if (empty($_POST["email"]))
         {$emailError = "Email is required";}
     else 
-        {$name = text_input($_POST["email"]);
+        {$email = text_input($_POST["email"]);
         if (!preg_match("/([\w\-]+\@[\w\-]+\.[\w\-]+)/", $email))
             {$emailError = "Invalid Email";}
     }
+
+    // GENDER 
+    if (empty($_POST["gender"]))
+        {$genderError = "Gender is Required";}
+    else
+       {$gender = text_input($_POST["gender"]);} 
+  
+
+
+    // MESSAGE
+    if (empty($_POST["message"]))
+        {$message = "";}
+    else 
+        {$message = text_input($_POST['message']);}    
+
 }
 
-
-
-// if(isset($POST["submit"])) {}
-
-
+// checks input
 function text_input($data) {
     $data = trim($data);
     $data = stripslashes($data);
@@ -133,7 +151,7 @@ function text_input($data) {
 <div class="form-wrapper" method="POST">
     <h2>FORM VALIDATION</h2>
     <p class="warning"><span>* Required field</span></p>
-
+    <!-- submit form to same script -->
    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
 
     <div>
@@ -148,16 +166,16 @@ function text_input($data) {
     </div>
     <div>
         <div>
-            <input type="radio" name="gender" value="Male">
+            <input type="radio" name="gender" <?php if(isset($gender) && $gender =="male") echo "checked";?>  value="Male">
             <label for="name">Male</label> 
         </div>
 
         <div>
-            <input type="radio" name="gender" value="Female" >
+            <input type="radio" name="gender" <?php if(isset($gender) && $gender =="female") echo "checked" ?>value="Female" >
             <label for="name">Female</label>
         </div>
 
-        <span>Select your gender.</>
+        <span><?php echo $genderError; ?></>
     </div>
     
     <div>
@@ -171,16 +189,6 @@ function text_input($data) {
 </div>
 
 <?php
-
-// echo "<h2>Your Input:</h2>";
-// echo $name;
-// echo "<br>";
-// echo $email;
-// echo "<br>";
-// echo $gender;
-// echo "<br>";
-// echo $message;
-
 echo "<div class='output-container'>";
 echo "<h2>Your Input:</h2>";
 echo "<p class='output-item'>Name: $name</p>";
@@ -188,7 +196,6 @@ echo "<p class='output-item'>Email: $email</p>";
 echo "<p class='output-item'>Gender: $gender</p>";
 echo "<p class='output-item'>Message: $message</p>";
 echo "</div>"
-
 ?>
 
 </body>
